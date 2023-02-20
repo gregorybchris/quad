@@ -9,7 +9,6 @@ interface GraphicsProps {
   running: boolean;
   onUpdate: (deltaTime: number) => void;
   world: World;
-  renderNotify: boolean;
 }
 
 export default function Graphics(props: GraphicsProps) {
@@ -48,7 +47,7 @@ export default function Graphics(props: GraphicsProps) {
     }
 
     renderScene(context);
-  }, [props.renderNotify, canvasSize]);
+  }, [props.world, canvasSize]);
 
   function renderScene(context: CanvasRenderingContext2D) {
     context.clearRect(0, 0, canvasSize.width, canvasSize.height);

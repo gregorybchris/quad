@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useState } from "react";
 import Particle from "../../src/lib/models/particle";
 import World from "../../src/lib/models/world";
 import {
@@ -14,7 +14,6 @@ import {
   randPolarFromMagnitude,
 } from "../../src/lib/math";
 import Graphics from "./Graphics";
-import { useRerender } from "../lib/hooks/render";
 import { Color } from "../lib/color";
 
 interface SimulationProps {
@@ -25,8 +24,7 @@ interface SimulationProps {
 const NUM_PARTICLES = 1000;
 
 export default function Simulation(props: SimulationProps) {
-  const world = useRef<World>(initWorld());
-  const [renderNotify, rerender] = useRerender();
+  const [world, setWorld] = useState<World>(initWorld());
 
   function initWorld(): World {
     const bounds = {
@@ -50,9 +48,10 @@ export default function Simulation(props: SimulationProps) {
   }
 
   function onUpdate(deltaTime: number) {
-    const currentWorld = world.current;
-    currentWorld.particles = currentWorld.particles.map((p) => updateParticle(p, currentWorld, deltaTime));
-    rerender();
+    setWorld((prevWorld) => ({
+      ...prevWorld,
+      particles: prevWorld.particles.map((p) => updateParticle(p, prevWorld, deltaTime)),
+    }));
   }
 
   function findNeighbors(particle: Particle, world: World, threshold: number): Particle[] {
@@ -88,7 +87,7 @@ export default function Simulation(props: SimulationProps) {
 
   return (
     <div className="flex h-full w-full flex-wrap justify-center">
-      <Graphics running={props.running} onUpdate={onUpdate} world={world.current} renderNotify={renderNotify} />
+      <Graphics running={props.running} onUpdate={onUpdate} world={world} />
     </div>
   );
 }
