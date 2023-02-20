@@ -1,4 +1,4 @@
-export enum Color {
+enum Color {
   BLACK = "black",
   BLUE = "blue",
   BROWN = "brown",
@@ -40,3 +40,5 @@ export const colorToHex = (color: Color) => {
       return "#ffffff";
   }
 };
+
+export default Color;

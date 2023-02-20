@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Particle from "../../src/lib/models/particle";
-import World from "../../src/lib/models/world";
+import World, { updateWorld } from "../../src/lib/models/world";
 import {
   wrapPoint,
   randPoint,
@@ -9,12 +9,12 @@ import {
   originPolar,
   multPolar,
   addPolarToPoint,
-  dist,
   clipPolar,
   randPolarFromMagnitude,
 } from "../../src/lib/math";
 import Graphics from "./Graphics";
-import { Color } from "../lib/color";
+import Color from "../lib/color";
+import Tree, { findNeighbors } from "../lib/tree";
 
 interface SimulationProps {
   running: boolean;
@@ -32,7 +32,7 @@ export default function Simulation(props: SimulationProps) {
       y: { min: -100, max: 100 },
     };
 
-    const particles = [];
+    const particles: Particle[] = [];
     for (let i = 0; i < NUM_PARTICLES; i++) {
       const particle: Particle = {
         position: randPoint(bounds),
@@ -41,21 +41,21 @@ export default function Simulation(props: SimulationProps) {
       };
       particles.push(particle);
     }
-    return {
+
+    const neighborThreshold = 5;
+    const tree: Tree = {
       particles,
+      threshold: neighborThreshold,
+    };
+
+    return {
+      tree,
       bounds,
     };
   }
 
   function onUpdate(deltaTime: number) {
-    setWorld((prevWorld) => ({
-      ...prevWorld,
-      particles: prevWorld.particles.map((p) => updateParticle(p, prevWorld, deltaTime)),
-    }));
-  }
-
-  function findNeighbors(particle: Particle, world: World, threshold: number): Particle[] {
-    return world.particles.filter((p) => dist(p.position, particle.position) < threshold);
+    setWorld((prevWorld) => updateWorld(prevWorld, updateParticle, deltaTime));
   }
 
   function updateParticle(particle: Particle, world: World, deltaTime: number): Particle {
@@ -63,9 +63,8 @@ export default function Simulation(props: SimulationProps) {
     const inertia = 0.65;
     const velocityRange = { min: 2, max: 8 };
     const noiseRange = { min: 0, max: 4 };
-    const neighborThreshold = 5;
 
-    const neighbors = findNeighbors(particle, world, neighborThreshold);
+    const neighbors = findNeighbors(world.tree, particle);
     const neighborsVelocity = polarMean(neighbors.map((n) => n.velocity));
     const noise = randPolarFromMagnitude(noiseRange);
     const targetVelocity = addPolars(neighborsVelocity, noise);
@@ -79,7 +78,7 @@ export default function Simulation(props: SimulationProps) {
     );
 
     return {
-      ...particle,
+      color: particle.color,
       position,
       velocity,
     };

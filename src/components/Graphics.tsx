@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import World from "../../src/lib/models/world";
+import World, { forEachParticle } from "../../src/lib/models/world";
 import { useAnimationFrame } from "../../src/lib/hooks/animation";
 import { colorToHex } from "../../src/lib/color";
 import Particle from "../../src/lib/models/particle";
@@ -51,14 +51,11 @@ export default function Graphics(props: GraphicsProps) {
 
   function renderScene(context: CanvasRenderingContext2D) {
     context.clearRect(0, 0, canvasSize.width, canvasSize.height);
-    props.world.particles.forEach((particle: Particle) => {
-      renderParticle(context, particle);
-    });
+    forEachParticle(props.world, (particle: Particle) => renderParticle(context, particle));
   }
 
   function renderParticle(context: CanvasRenderingContext2D, particle: Particle) {
     const particleRadius = 1.5;
-    const particleColor = particle.color;
 
     const GRAPHICS_BOUNDS: PointRange = {
       x: { min: 0, max: canvasSize.width },
@@ -67,7 +64,7 @@ export default function Graphics(props: GraphicsProps) {
     const position = scalePoint(particle.position, props.world.bounds, GRAPHICS_BOUNDS);
     context.beginPath();
     context.arc(position.x, position.y, particleRadius, 0, 2 * Math.PI);
-    context.fillStyle = colorToHex(particleColor);
+    context.fillStyle = colorToHex(particle.color);
     context.fill();
   }
 
