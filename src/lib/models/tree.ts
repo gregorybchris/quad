@@ -1,6 +1,6 @@
-import { dist } from "./math";
-import Particle from "./models/particle";
-import World from "./models/world";
+import { dist } from "../math";
+import Particle from "./particle";
+import World from "./world";
 
 export default interface Tree {
   threshold: number;

@@ -14,7 +14,7 @@ import {
 } from "../../src/lib/math";
 import Graphics from "./Graphics";
 import Color from "../lib/color";
-import Tree, { findNeighbors } from "../lib/tree";
+import Tree, { findNeighbors } from "../lib/models/tree";
 
 interface SimulationProps {
   running: boolean;

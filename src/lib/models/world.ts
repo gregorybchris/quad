@@ -1,5 +1,5 @@
 import { Point, PointRange } from "../math";
-import Tree, { forEachParticle as forEach, updateTree } from "../tree";
+import Tree, { forEachParticle as forEach, updateTree } from "./tree";
 import Particle from "./particle";
 
 export default interface World {

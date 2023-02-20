@@ -56,12 +56,10 @@ export default function Graphics(props: GraphicsProps) {
 
   function renderParticle(context: CanvasRenderingContext2D, particle: Particle) {
     const particleRadius = 1.5;
-
-    const GRAPHICS_BOUNDS: PointRange = {
+    const position = scalePoint(particle.position, props.world.bounds, {
       x: { min: 0, max: canvasSize.width },
       y: { min: 0, max: canvasSize.height },
-    };
-    const position = scalePoint(particle.position, props.world.bounds, GRAPHICS_BOUNDS);
+    });
     context.beginPath();
     context.arc(position.x, position.y, particleRadius, 0, 2 * Math.PI);
     context.fillStyle = colorToHex(particle.color);
