@@ -1,6 +1,7 @@
-import { Point, PointRange } from "../math";
+import { Point, PointRange, originPolar, randPoint } from "../math";
 import Tree, { forEachParticle as forEach, updateTree } from "./tree";
 import Particle from "./particle";
+import Color from "../color";
 
 export default interface World {
   tree: Tree;
@@ -28,4 +29,32 @@ export function updateWorld(
 
 export function forEachParticle(world: World, callback: (particle: Particle) => void): void {
   forEach(world.tree, callback);
+}
+
+export function generateWorld(numParticles: number): World {
+  const bounds = {
+    x: { min: -100, max: 100 },
+    y: { min: -100, max: 100 },
+  };
+
+  const particles: Particle[] = [];
+  for (let i = 0; i < numParticles; i++) {
+    const particle: Particle = {
+      position: randPoint(bounds),
+      velocity: originPolar(),
+      color: Color.RED,
+    };
+    particles.push(particle);
+  }
+
+  const neighborThreshold = 5;
+  const tree: Tree = {
+    particles,
+    threshold: neighborThreshold,
+  };
+
+  return {
+    tree,
+    bounds,
+  };
 }

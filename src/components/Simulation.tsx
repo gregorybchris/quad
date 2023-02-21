@@ -1,20 +1,17 @@
 import { useState } from "react";
 import Particle from "../../src/lib/models/particle";
-import World, { updateWorld } from "../../src/lib/models/world";
+import World, { generateWorld, updateWorld } from "../../src/lib/models/world";
 import {
   wrapPoint,
-  randPoint,
   polarMean,
   addPolars,
-  originPolar,
   multPolar,
   addPolarToPoint,
   clipPolar,
   randPolarFromMagnitude,
 } from "../../src/lib/math";
 import Graphics from "./Graphics";
-import Color from "../lib/color";
-import Tree, { findNeighbors } from "../lib/models/tree";
+import { findNeighbors } from "../lib/models/tree";
 
 interface SimulationProps {
   running: boolean;
@@ -24,35 +21,7 @@ interface SimulationProps {
 const NUM_PARTICLES = 1000;
 
 export default function Simulation(props: SimulationProps) {
-  const [world, setWorld] = useState<World>(initWorld());
-
-  function initWorld(): World {
-    const bounds = {
-      x: { min: -100, max: 100 },
-      y: { min: -100, max: 100 },
-    };
-
-    const particles: Particle[] = [];
-    for (let i = 0; i < NUM_PARTICLES; i++) {
-      const particle: Particle = {
-        position: randPoint(bounds),
-        velocity: originPolar(),
-        color: Color.RED,
-      };
-      particles.push(particle);
-    }
-
-    const neighborThreshold = 5;
-    const tree: Tree = {
-      particles,
-      threshold: neighborThreshold,
-    };
-
-    return {
-      tree,
-      bounds,
-    };
-  }
+  const [world, setWorld] = useState<World>(generateWorld(NUM_PARTICLES));
 
   function onUpdate(deltaTime: number) {
     setWorld((prevWorld) => updateWorld(prevWorld, updateParticle, deltaTime));
