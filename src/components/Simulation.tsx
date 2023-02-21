@@ -18,31 +18,33 @@ interface SimulationProps {
   setRunning: (running: boolean) => void;
 }
 
-const NUM_PARTICLES = 1000;
+const CONFIG = {
+  numParticles: 1000,
+  neighborThreshold: 5,
+  timeMultiplier: 0.01,
+  inertia: 0.65,
+  velocityRange: { min: 2, max: 8 },
+  noiseRange: { min: 0, max: 4 },
+};
 
 export default function Simulation(props: SimulationProps) {
-  const [world, setWorld] = useState<World>(generateWorld(NUM_PARTICLES));
+  const [world, setWorld] = useState<World>(generateWorld(CONFIG.numParticles, CONFIG.neighborThreshold));
 
   function onUpdate(deltaTime: number) {
     setWorld((prevWorld) => updateWorld(prevWorld, updateParticle, deltaTime));
   }
 
   function updateParticle(particle: Particle, world: World, deltaTime: number): Particle {
-    const timeMultiplier = 0.01;
-    const inertia = 0.65;
-    const velocityRange = { min: 2, max: 8 };
-    const noiseRange = { min: 0, max: 4 };
-
     const neighbors = findNeighbors(world.tree, particle);
     const neighborsVelocity = polarMean(neighbors.map((n) => n.velocity));
-    const noise = randPolarFromMagnitude(noiseRange);
+    const noise = randPolarFromMagnitude(CONFIG.noiseRange);
     const targetVelocity = addPolars(neighborsVelocity, noise);
     const velocity = clipPolar(
-      addPolars(multPolar(particle.velocity, inertia), multPolar(targetVelocity, 1 - inertia)),
-      velocityRange
+      addPolars(multPolar(particle.velocity, CONFIG.inertia), multPolar(targetVelocity, 1 - CONFIG.inertia)),
+      CONFIG.velocityRange
     );
     const position = wrapPoint(
-      addPolarToPoint(particle.position, multPolar(velocity, deltaTime * timeMultiplier)),
+      addPolarToPoint(particle.position, multPolar(velocity, deltaTime * CONFIG.timeMultiplier)),
       world.bounds
     );
 

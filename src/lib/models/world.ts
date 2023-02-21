@@ -31,7 +31,7 @@ export function forEachParticle(world: World, callback: (particle: Particle) => 
   forEach(world.tree, callback);
 }
 
-export function generateWorld(numParticles: number): World {
+export function generateWorld(numParticles: number, neighborThreshold: number): World {
   const bounds = {
     x: { min: -100, max: 100 },
     y: { min: -100, max: 100 },
@@ -47,7 +47,6 @@ export function generateWorld(numParticles: number): World {
     particles.push(particle);
   }
 
-  const neighborThreshold = 5;
   const tree: Tree = {
     particles,
     threshold: neighborThreshold,

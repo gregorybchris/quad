@@ -3,7 +3,7 @@ import World, { forEachParticle } from "../../src/lib/models/world";
 import { useAnimationFrame } from "../../src/lib/hooks/animation";
 import { colorToHex } from "../../src/lib/color";
 import Particle from "../../src/lib/models/particle";
-import { Box, PointRange, scalePoint } from "../../src/lib/math";
+import { Box, scalePoint } from "../../src/lib/math";
 
 interface GraphicsProps {
   running: boolean;
