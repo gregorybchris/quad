@@ -26,7 +26,7 @@ export function newTree<T>(box: Box, capacity: number): Tree<T> {
   };
 }
 
-// Insert an item into a quadtree, splitting if necessary.
+// Insert an item into a quadtree, dividing if necessary.
 export function insertItem<T>(tree: Tree<T>, item: Item<T>): Tree<T> {
   if (!boxContains(tree.box, item.point)) {
     return tree;

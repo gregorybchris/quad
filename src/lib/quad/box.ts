@@ -1,6 +1,6 @@
 import { Point, PointRange } from "../math";
 
-// Axis-aligned bounding box with center and half-size
+// Square bounding box with center and half-size
 export default interface Box {
   c: Point;
   hs: number;
