@@ -1,10 +1,11 @@
 import { Point, PointRange, originPolar, randPoint } from "../math";
-import Tree, { forEachParticle as forEach, updateTree } from "./tree";
-import Particle from "./particle";
+import Population, { forEachAgent as forEach, updatePopulation } from "./population";
+
+import Agent from "./agent";
 import Color from "../color";
 
 export default interface World {
-  tree: Tree;
+  population: Population;
   bounds: PointRange;
 }
 
@@ -18,42 +19,42 @@ export function inWorldBounds(position: Point, world: World): boolean {
 
 export function updateWorld(
   world: World,
-  updateParticle: (particle: Particle, world: World, deltaTime: number) => Particle,
+  updateAgent: (agent: Agent, world: World, deltaTime: number) => Agent,
   deltaTime: number
 ): World {
   return {
     bounds: world.bounds,
-    tree: updateTree(world.tree, updateParticle, world, deltaTime),
+    population: updatePopulation(world.population, updateAgent, world, deltaTime),
   };
 }
 
-export function forEachParticle(world: World, callback: (particle: Particle) => void): void {
-  forEach(world.tree, callback);
+export function forEachAgent(world: World, callback: (agent: Agent) => void): void {
+  forEach(world.population, callback);
 }
 
-export function generateWorld(numParticles: number, neighborThreshold: number): World {
+export function generateWorld(numAgents: number, neighborThreshold: number): World {
   const bounds = {
     x: { min: -100, max: 100 },
     y: { min: -100, max: 100 },
   };
 
-  const particles: Particle[] = [];
-  for (let i = 0; i < numParticles; i++) {
-    const particle: Particle = {
+  const agents: Agent[] = [];
+  for (let i = 0; i < numAgents; i++) {
+    const agent: Agent = {
       position: randPoint(bounds),
       velocity: originPolar(),
       color: Color.RED,
     };
-    particles.push(particle);
+    agents.push(agent);
   }
 
-  const tree: Tree = {
-    particles,
+  const population: Population = {
+    agents,
     threshold: neighborThreshold,
   };
 
   return {
-    tree,
+    population,
     bounds,
   };
 }

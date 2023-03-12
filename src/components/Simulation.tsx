@@ -1,17 +1,18 @@
-import { useState } from "react";
-import Particle from "../../src/lib/models/particle";
 import World, { generateWorld, updateWorld } from "../../src/lib/models/world";
 import {
-  wrapPoint,
-  polarMean,
-  addPolars,
-  multPolar,
   addPolarToPoint,
+  addPolars,
   clipPolar,
+  multPolar,
+  polarMean,
   randPolarFromMagnitude,
+  wrapPoint,
 } from "../../src/lib/math";
+
+import Agent from "../../src/lib/models/agent";
 import Graphics from "./Graphics";
-import { findNeighbors } from "../lib/models/tree";
+import { findNeighbors } from "../lib/models/population";
+import { useState } from "react";
 
 interface SimulationProps {
   running: boolean;
@@ -19,7 +20,7 @@ interface SimulationProps {
 }
 
 const CONFIG = {
-  numParticles: 1000,
+  numAgents: 1000,
   neighborThreshold: 5,
   timeMultiplier: 0.01,
   inertia: 0.65,
@@ -28,28 +29,28 @@ const CONFIG = {
 };
 
 export default function Simulation(props: SimulationProps) {
-  const [world, setWorld] = useState<World>(generateWorld(CONFIG.numParticles, CONFIG.neighborThreshold));
+  const [world, setWorld] = useState<World>(generateWorld(CONFIG.numAgents, CONFIG.neighborThreshold));
 
   function onUpdate(deltaTime: number) {
-    setWorld((prevWorld) => updateWorld(prevWorld, updateParticle, deltaTime));
+    setWorld((prevWorld) => updateWorld(prevWorld, updateAgent, deltaTime));
   }
 
-  function updateParticle(particle: Particle, world: World, deltaTime: number): Particle {
-    const neighbors = findNeighbors(world.tree, particle);
+  function updateAgent(agent: Agent, world: World, deltaTime: number): Agent {
+    const neighbors = findNeighbors(world.population, agent);
     const neighborsVelocity = polarMean(neighbors.map((n) => n.velocity));
     const noise = randPolarFromMagnitude(CONFIG.noiseRange);
     const targetVelocity = addPolars(neighborsVelocity, noise);
     const velocity = clipPolar(
-      addPolars(multPolar(particle.velocity, CONFIG.inertia), multPolar(targetVelocity, 1 - CONFIG.inertia)),
+      addPolars(multPolar(agent.velocity, CONFIG.inertia), multPolar(targetVelocity, 1 - CONFIG.inertia)),
       CONFIG.velocityRange
     );
     const position = wrapPoint(
-      addPolarToPoint(particle.position, multPolar(velocity, deltaTime * CONFIG.timeMultiplier)),
+      addPolarToPoint(agent.position, multPolar(velocity, deltaTime * CONFIG.timeMultiplier)),
       world.bounds
     );
 
     return {
-      color: particle.color,
+      color: agent.color,
       position,
       velocity,
     };

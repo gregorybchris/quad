@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
-import World, { forEachParticle } from "../../src/lib/models/world";
-import { useAnimationFrame } from "../../src/lib/hooks/animation";
-import { colorToHex } from "../../src/lib/color";
-import Particle from "../../src/lib/models/particle";
 import { Box, scalePoint } from "../../src/lib/math";
+import World, { forEachAgent } from "../../src/lib/models/world";
+import { useEffect, useRef, useState } from "react";
+
+import Agent from "../../src/lib/models/agent";
+import { colorToHex } from "../../src/lib/color";
+import { useAnimationFrame } from "../../src/lib/hooks/animation";
 
 interface GraphicsProps {
   running: boolean;
@@ -51,18 +52,18 @@ export default function Graphics(props: GraphicsProps) {
 
   function renderScene(context: CanvasRenderingContext2D) {
     context.clearRect(0, 0, canvasSize.width, canvasSize.height);
-    forEachParticle(props.world, (particle: Particle) => renderParticle(context, particle));
+    forEachAgent(props.world, (agent: Agent) => renderAgent(context, agent));
   }
 
-  function renderParticle(context: CanvasRenderingContext2D, particle: Particle) {
-    const particleRadius = 1.5;
-    const position = scalePoint(particle.position, props.world.bounds, {
+  function renderAgent(context: CanvasRenderingContext2D, agent: Agent) {
+    const agentRadius = 1.5;
+    const position = scalePoint(agent.position, props.world.bounds, {
       x: { min: 0, max: canvasSize.width },
       y: { min: 0, max: canvasSize.height },
     });
     context.beginPath();
-    context.arc(position.x, position.y, particleRadius, 0, 2 * Math.PI);
-    context.fillStyle = colorToHex(particle.color);
+    context.arc(position.x, position.y, agentRadius, 0, 2 * Math.PI);
+    context.fillStyle = colorToHex(agent.color);
     context.fill();
   }
 

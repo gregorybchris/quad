@@ -1,7 +1,8 @@
-import { Color } from "../color";
 import { Point, Polar } from "../math";
 
-export default interface Particle {
+import Color from "../color";
+
+export default interface Agent {
   position: Point;
   velocity: Polar;
   color: Color;
