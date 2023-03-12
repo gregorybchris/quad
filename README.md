@@ -1,3 +1,3 @@
 # Quad
 
-Boids with a QuadTree datastructure
+Boids with a QuadTree data structure
