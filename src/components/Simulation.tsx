@@ -11,6 +11,7 @@ import {
 
 import Agent from "../../src/lib/models/agent";
 import Graphics from "./Graphics";
+import SimulationConfig from "../lib/configs/simulationConfig";
 import { findNeighbors } from "../lib/models/population";
 import { useState } from "react";
 
@@ -19,7 +20,7 @@ interface SimulationProps {
   setRunning: (running: boolean) => void;
 }
 
-const CONFIG = {
+const CONFIG: SimulationConfig = {
   numAgents: 1000,
   neighborThreshold: 5,
   treeCapacity: 4,
@@ -30,9 +31,7 @@ const CONFIG = {
 };
 
 export default function Simulation(props: SimulationProps) {
-  const [world, setWorld] = useState<World>(
-    generateWorld(CONFIG.numAgents, CONFIG.neighborThreshold, CONFIG.treeCapacity)
-  );
+  const [world, setWorld] = useState<World>(generateWorld(CONFIG.numAgents, CONFIG.treeCapacity));
 
   function onUpdate(deltaTime: number) {
     setWorld((prevWorld) => updateWorld(prevWorld, updateAgent, deltaTime));

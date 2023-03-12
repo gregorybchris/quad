@@ -1,4 +1,4 @@
-import { Point, PointRange } from "../math";
+import { Point, PointRange, pointInRange } from "../math";
 
 // Square bounding box with center and half-size
 export default interface Box {
@@ -7,8 +7,7 @@ export default interface Box {
 }
 
 export function boxContains(box: Box, point: Point): boolean {
-  const range = toPointRange(box);
-  return point.x > range.x.min && point.x < range.x.max && point.y > range.y.min && point.y < range.y.max;
+  return pointInRange(toPointRange(box), point);
 }
 
 export function boxIntersects(self: Box, other: Box): boolean {

@@ -21,21 +21,22 @@ export function newPopulation(agents: Agent[], treeCapacity: number, bounds: Poi
 }
 
 function newAgentTree(agents: Agent[], box: Box, treeCapacity: number): Tree<Agent> {
-  const tree = newTree<Agent>(box, treeCapacity);
+  let tree = newTree<Agent>(box, treeCapacity);
   agents.forEach((agent) => {
     const item: Item<Agent> = {
       data: agent,
       point: agent.position,
     };
-    insertItem(tree, item);
+    tree = insertItem(tree, item);
   });
   return tree;
 }
 
 export function findNeighbors(population: Population, agent: Agent, neighborThreshold: number): Agent[] {
-  return population.agents.filter((p) => dist(p.position, agent.position) < neighborThreshold);
-  // const box = fromRadius(agent.position, neighborThreshold);
-  // return queryTree(population.tree, box).map((item) => item.data);
+  const box = fromRadius(agent.position, neighborThreshold);
+  return queryTree(population.tree, box)
+    .map((item) => item.data)
+    .filter((p) => dist(p.position, agent.position) < neighborThreshold);
 }
 
 export function updatePopulation(
@@ -47,8 +48,7 @@ export function updatePopulation(
   const newAgents = population.agents.map((p) => updateAgent(p, prevWorld, deltaTime));
   return {
     agents: newAgents,
-    // tree: newAgentTree(newAgents, population.tree.box, population.tree.capacity),
-    tree: population.tree,
+    tree: newAgentTree(newAgents, population.tree.box, population.tree.capacity),
   };
 }
 

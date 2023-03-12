@@ -32,7 +32,7 @@ export function forEachAgent(world: World, callback: (agent: Agent) => void): vo
   forEach(world.population, callback);
 }
 
-export function generateWorld(numAgents: number, neighborThreshold: number, treeCapacity: number): World {
+export function generateWorld(numAgents: number, treeCapacity: number): World {
   const bounds = {
     x: { min: -100, max: 100 },
     y: { min: -100, max: 100 },
@@ -43,7 +43,7 @@ export function generateWorld(numAgents: number, neighborThreshold: number, tree
     const agent: Agent = {
       position: randPoint(bounds),
       velocity: originPolar(),
-      color: Color.YELLOW,
+      color: Color.PURPLE,
     };
     agents.push(agent);
   }

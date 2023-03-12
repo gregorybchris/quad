@@ -193,3 +193,7 @@ export function dist(pointA: Point, pointB: Point): number {
   const dy = pointA.y - pointB.y;
   return Math.sqrt(dx * dx + dy * dy);
 }
+
+export function pointInRange(range: PointRange, point: Point): boolean {
+  return point.x > range.x.min && point.x <= range.x.max && point.y > range.y.min && point.y <= range.y.max;
+}

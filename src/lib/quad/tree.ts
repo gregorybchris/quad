@@ -11,6 +11,7 @@ interface Children<T> {
 }
 
 export default interface Tree<T> {
+  size: number;
   capacity: number;
   box: Box;
   items: Item<T>[];
@@ -19,6 +20,7 @@ export default interface Tree<T> {
 
 export function newTree<T>(box: Box, capacity: number): Tree<T> {
   return {
+    size: 0,
     capacity,
     box,
     items: [],
@@ -35,6 +37,7 @@ export function insertItem<T>(tree: Tree<T>, item: Item<T>): Tree<T> {
   if (tree.children === None && tree.items.length < tree.capacity) {
     return {
       ...tree,
+      size: tree.size + 1,
       items: [...tree.items, item],
     };
   }
@@ -51,6 +54,7 @@ export function insertItem<T>(tree: Tree<T>, item: Item<T>): Tree<T> {
 
   return {
     ...tree,
+    size: tree.size + 1,
     children: {
       nw: insertItem(tree.children.nw, item),
       ne: insertItem(tree.children.ne, item),
@@ -79,7 +83,9 @@ export function divideTree<T>(tree: Tree<T>): Tree<T> {
 
 // Find all items contained within a given box.
 export function queryTree<T>(tree: Tree<T>, box: Box): Item<T>[] {
-  if (!boxIntersects(tree.box, box)) return [];
+  if (!boxIntersects(tree.box, box)) {
+    return [];
+  }
 
   const items: Item<T>[] = [];
   for (let i = 0; i < tree.items.length; i++) {
@@ -92,10 +98,10 @@ export function queryTree<T>(tree: Tree<T>, box: Box): Item<T>[] {
     return items;
   }
 
-  items.push.apply(queryTree(tree.children.nw, box));
-  items.push.apply(queryTree(tree.children.ne, box));
-  items.push.apply(queryTree(tree.children.sw, box));
-  items.push.apply(queryTree(tree.children.se, box));
+  Array.prototype.push.apply(items, queryTree(tree.children.nw, box));
+  Array.prototype.push.apply(items, queryTree(tree.children.ne, box));
+  Array.prototype.push.apply(items, queryTree(tree.children.sw, box));
+  Array.prototype.push.apply(items, queryTree(tree.children.se, box));
 
   return items;
 }
