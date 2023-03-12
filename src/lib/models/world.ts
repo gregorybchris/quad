@@ -43,7 +43,7 @@ export function generateWorld(numAgents: number, neighborThreshold: number, tree
     const agent: Agent = {
       position: randPoint(bounds),
       velocity: originPolar(),
-      color: Color.RED,
+      color: Color.YELLOW,
     };
     agents.push(agent);
   }

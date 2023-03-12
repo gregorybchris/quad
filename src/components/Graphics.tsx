@@ -1,9 +1,9 @@
 import { Box, scalePoint } from "../../src/lib/math";
+import Color, { colorToHex } from "../../src/lib/color";
 import World, { forEachAgent } from "../../src/lib/models/world";
 import { useEffect, useRef, useState } from "react";
 
 import Agent from "../../src/lib/models/agent";
-import { colorToHex } from "../../src/lib/color";
 import { useAnimationFrame } from "../../src/lib/hooks/animation";
 
 interface GraphicsProps {
@@ -12,7 +12,10 @@ interface GraphicsProps {
   world: World;
 }
 
+const COLORS = [Color.BLUE, Color.RED, Color.YELLOW, Color.GREEN, Color.PURPLE, Color.PINK];
+
 export default function Graphics(props: GraphicsProps) {
+  const [agentColor, setAgentColor] = useState<Color>(Color.BLUE);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [canvasSize, setCanvasSize] = useState<Box>({ width: 0, height: 0 });
   useAnimationFrame(props.onUpdate, props.running);
@@ -63,13 +66,19 @@ export default function Graphics(props: GraphicsProps) {
     });
     context.beginPath();
     context.arc(position.x, position.y, agentRadius, 0, 2 * Math.PI);
-    context.fillStyle = colorToHex(agent.color);
+    context.fillStyle = colorToHex(agentColor);
     context.fill();
+  }
+
+  function updateAgentColor() {
+    const index = COLORS.indexOf(agentColor);
+    const newAgentColor = COLORS[(index + 1) % COLORS.length];
+    setAgentColor(newAgentColor);
   }
 
   return (
     <div className="mx-8 mb-10 h-96 w-full border-4 border-gray-400 md:mx-0 md:h-96 md:w-1/2">
-      <canvas className="block h-full w-full bg-slate-700" ref={canvasRef} />
+      <canvas className="block h-full w-full bg-slate-700" ref={canvasRef} onClick={updateAgentColor} />
     </div>
   );
 }
