@@ -68,7 +68,7 @@ export default function Graphics(props: GraphicsProps) {
   }
 
   return (
-    <div className="mx-8 mb-10 h-96 w-full md:mx-0 md:h-96 md:w-1/2">
+    <div className="mx-8 mb-10 h-96 w-full border-4 border-gray-400 md:mx-0 md:h-96 md:w-1/2">
       <canvas className="block h-full w-full bg-slate-700" ref={canvasRef} />
     </div>
   );

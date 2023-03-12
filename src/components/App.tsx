@@ -11,8 +11,8 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-w-screen font-main min-h-screen  bg-slate-900 font-sen text-lg text-slate-200">
-      <div className="py-10 text-center">QuadTree</div>
+    <div className="min-w-screen font-main min-h-screen  bg-slate-900 font-sen text-gray-400">
+      <div className="py-10 text-center text-3xl font-bold">QuadTree</div>
       <Simulation running={running} setRunning={setRunning} />
     </div>
   );
