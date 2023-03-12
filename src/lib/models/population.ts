@@ -1,14 +1,41 @@
+import Box, { fromPointRange, fromRadius } from "../quad/box";
+import { PointRange, dist } from "../math";
+import Tree, { insertItem, newTree, queryTree } from "../quad/tree";
+
 import Agent from "./agent";
+import Item from "../quad/item";
 import World from "./world";
-import { dist } from "../math";
 
 export default interface Population {
-  threshold: number;
-  agents: readonly Agent[];
+  agents: Agent[];
+  tree: Tree<Agent>;
 }
 
-export function findNeighbors(population: Population, agent: Agent): Agent[] {
-  return population.agents.filter((p) => dist(p.position, agent.position) < population.threshold);
+export function newPopulation(agents: Agent[], treeCapacity: number, bounds: PointRange): Population {
+  const box = fromPointRange(bounds);
+  const tree = newAgentTree(agents, box, treeCapacity);
+  return {
+    agents,
+    tree,
+  };
+}
+
+function newAgentTree(agents: Agent[], box: Box, treeCapacity: number): Tree<Agent> {
+  const tree = newTree<Agent>(box, treeCapacity);
+  agents.forEach((agent) => {
+    const item: Item<Agent> = {
+      data: agent,
+      point: agent.position,
+    };
+    insertItem(tree, item);
+  });
+  return tree;
+}
+
+export function findNeighbors(population: Population, agent: Agent, neighborThreshold: number): Agent[] {
+  return population.agents.filter((p) => dist(p.position, agent.position) < neighborThreshold);
+  // const box = fromRadius(agent.position, neighborThreshold);
+  // return queryTree(population.tree, box).map((item) => item.data);
 }
 
 export function updatePopulation(
@@ -17,9 +44,11 @@ export function updatePopulation(
   prevWorld: World,
   deltaTime: number
 ): Population {
+  const newAgents = population.agents.map((p) => updateAgent(p, prevWorld, deltaTime));
   return {
-    threshold: population.threshold,
-    agents: population.agents.map((p) => updateAgent(p, prevWorld, deltaTime)),
+    agents: newAgents,
+    // tree: newAgentTree(newAgents, population.tree.box, population.tree.capacity),
+    tree: population.tree,
   };
 }
 

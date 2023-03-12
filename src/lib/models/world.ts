@@ -1,5 +1,5 @@
 import { Point, PointRange, originPolar, randPoint } from "../math";
-import Population, { forEachAgent as forEach, updatePopulation } from "./population";
+import Population, { forEachAgent as forEach, newPopulation, updatePopulation } from "./population";
 
 import Agent from "./agent";
 import Color from "../color";
@@ -32,7 +32,7 @@ export function forEachAgent(world: World, callback: (agent: Agent) => void): vo
   forEach(world.population, callback);
 }
 
-export function generateWorld(numAgents: number, neighborThreshold: number): World {
+export function generateWorld(numAgents: number, neighborThreshold: number, treeCapacity: number): World {
   const bounds = {
     x: { min: -100, max: 100 },
     y: { min: -100, max: 100 },
@@ -48,10 +48,7 @@ export function generateWorld(numAgents: number, neighborThreshold: number): Wor
     agents.push(agent);
   }
 
-  const population: Population = {
-    agents,
-    threshold: neighborThreshold,
-  };
+  const population = newPopulation(agents, treeCapacity, bounds);
 
   return {
     population,

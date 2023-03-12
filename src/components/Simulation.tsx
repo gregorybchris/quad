@@ -22,6 +22,7 @@ interface SimulationProps {
 const CONFIG = {
   numAgents: 1000,
   neighborThreshold: 5,
+  treeCapacity: 4,
   timeMultiplier: 0.01,
   inertia: 0.65,
   velocityRange: { min: 2, max: 8 },
@@ -29,17 +30,25 @@ const CONFIG = {
 };
 
 export default function Simulation(props: SimulationProps) {
-  const [world, setWorld] = useState<World>(generateWorld(CONFIG.numAgents, CONFIG.neighborThreshold));
+  const [world, setWorld] = useState<World>(
+    generateWorld(CONFIG.numAgents, CONFIG.neighborThreshold, CONFIG.treeCapacity)
+  );
 
   function onUpdate(deltaTime: number) {
     setWorld((prevWorld) => updateWorld(prevWorld, updateAgent, deltaTime));
   }
 
   function updateAgent(agent: Agent, world: World, deltaTime: number): Agent {
-    const neighbors = findNeighbors(world.population, agent);
-    const neighborsVelocity = polarMean(neighbors.map((n) => n.velocity));
-    const noise = randPolarFromMagnitude(CONFIG.noiseRange);
-    const targetVelocity = addPolars(neighborsVelocity, noise);
+    const neighbors = findNeighbors(world.population, agent, CONFIG.neighborThreshold);
+    let targetVelocity;
+    if (neighbors.length > 0) {
+      const neighborsVelocity = polarMean(neighbors.map((n) => n.velocity));
+      const noise = randPolarFromMagnitude(CONFIG.noiseRange);
+      targetVelocity = addPolars(neighborsVelocity, noise);
+    } else {
+      const noise = randPolarFromMagnitude(CONFIG.noiseRange);
+      targetVelocity = addPolars(agent.velocity, noise);
+    }
     const velocity = clipPolar(
       addPolars(multPolar(agent.velocity, CONFIG.inertia), multPolar(targetVelocity, 1 - CONFIG.inertia)),
       CONFIG.velocityRange

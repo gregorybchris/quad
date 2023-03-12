@@ -31,3 +31,10 @@ export function fromPointRange(range: PointRange): Box {
     hs: hs,
   };
 }
+
+export function fromRadius(point: Point, radius: number): Box {
+  return {
+    c: point,
+    hs: radius,
+  };
+}

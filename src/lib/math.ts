@@ -58,10 +58,14 @@ export function rectToPolar(point: Point): Polar {
 }
 
 export function polarMean(polars: Polar[]): Polar {
+  if (polars.length === 0) console.error("Cannot take polar mean of array of length zero");
+
   return rectToPolar(pointMean(polars.map(polarToRect)));
 }
 
 function mean(values: number[]): number {
+  if (values.length === 0) console.error("Cannot take mean of array of length zero");
+
   let sum = 0;
   for (let i = 0; i < values.length; i++) {
     sum += values[i];
@@ -70,6 +74,8 @@ function mean(values: number[]): number {
 }
 
 export function pointMean(points: Point[]): Point {
+  if (points.length === 0) console.error("Cannot take point mean of array of length zero");
+
   return {
     x: mean(points.map((p) => p.x)),
     y: mean(points.map((p) => p.y)),
@@ -117,6 +123,7 @@ export function clipPolar(polar: Polar, range: Range): Polar {
 }
 
 export function scaleValue(value: number, rangeA: Range, rangeB: Range): number {
+  if (rangeA.max === rangeA.min) console.error("Cannot scale using range with zero width");
   return ((value - rangeA.min) / (rangeA.max - rangeA.min)) * (rangeB.max - rangeB.min) + rangeB.min;
 }
 
